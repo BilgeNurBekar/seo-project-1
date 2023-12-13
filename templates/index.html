@@ -1,0 +1,72 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML SEO Test</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+</head>
+<body>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    
+
+   
+
+
+
+    <nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-primary text-light flex-row ">
+        <a class="navbar-brand font-weight-bolder" href="#">Zinu  Crawler SEO TEST</a>
+        
+          <div class="navbar-nav-scroll">
+            
+            <ul class="navbar-nav  mt+2 mt-mr+2 flex-row">
+              <li class="nav-item ">
+                <a class="nav-link pr-5" href="#">Anasayfa <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link pr-5 " href="#">Biz Kimiz?</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link pr-5 " href="#">Görüşleriniz</a>
+              </li>
+            </ul>
+           
+          </div>
+    </nav>
+
+
+
+   
+    <br><br><br><br><br><br><br>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 m-2">
+                <form  action="/webCrawler" method="post">
+                    <input  type="text" name="url" placeholder="URL giriniz" required>
+                    <button  type="submit">Tara</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <br><br><br><br><br><br><br>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 m-2">
+            <form action="/dosya_yukle" method="post" enctype="multipart/form-data">
+                <input type="file" name="dosya" accept=".html" required>
+                <button type="submit">Dosya Yükle</button>
+             </form>
+            </div>
+        </div>
+    </div>
+
+    
+</body>
+
+</html>
