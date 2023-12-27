@@ -1,21 +1,327 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Zinu SEO Crawler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
+        integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
+
 <body>
-      <h1>TEST SONUÇLARI<h1><br>
-        <form  action="/" method="post">
-            <button  type="button">AnaSayfa' ya Dön</button>
-        </form><br><br>
-        <h2>Kritik<h2>
-            <p>H1 etiketine sahip olmayan adresler: <br>{{kritik}}<p><br>
-        <h2>Uyarı<h2>
-            <p>4xx durum koduna sahip olan adresler: <br>{{uyari}}<p><br>
-        <h2>bilgilendirme<h2>
-            <p>H1 Tag 'ını çift kullanan adresler: <br>{{bilgilendirme}}<p> 
-                   
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <a class="navbar-brand" href="#">Zinu SEO Crawler</a>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item ml-auto">
+                    <a class="nav-link" href="/">Anasayfa</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br><br>
+    {% if  test_sonuc1 %} 
+    <div class="container mt-5">
+        <h1>{{test_sonuc1}}</h1>
+        <div class="row mt-4">
+            <!-- Kritik -->
+            <div class="col-md-4">
+                <div class="card border-danger mb-3">
+                    <div class="card-body">
+                        <h2 class="card-title text-danger">Kritik</h2>
+                        <!-- H1 etiketine sahip olmayan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>H1 etiketine sahip olmayan adresler:</h3>
+                                {% if  h1isnot =="Harika H1 etiketi kullanılmayan sayfaya rastlanmadı :)" %}
+                                <p>{{h1isnot}}</p>
+                                {% else %}    
+                                <ul>
+                                    {% for h1not in h1isnot %}
+                                        <li><a href="{{ h1not }}" target="_blank">{{ h1not }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}                    
+                            </div>
+                        </div>
+
+                        <!-- 404 durum koduna sahip adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>404 durum koduna sahip adresler:</h3>
+                                {% if  badstatus =="Harika 404 durum koduna sahip sayfaya rastlanmadı :)" %}
+                                <p>{{badstatus}}</p>  
+                                {% else %}  
+                                <ul>
+                                        {% for badstatuss in badstatus %}
+                                            <li><a href="{{ badstatuss }}" target="_blank">{{ badstatuss }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                    
+                                {% endif %}  
+                            </div>
+                        </div>
+
+                        <!-- Description' ı boş olan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Description' ı boş olan adresler:</h3>
+                                {% if  emptyDescription== "Harika meta description'a sahip olmayan bir adres ile karşılaşılmadı :) " %}
+                                <p>{{emptyDescription}}</p>
+                                {% else %}
+                                <ul>
+                                        {% for emptyDescription1 in emptyDescription %}
+                                            <li><a href="{{ emptyDescription1 }}" target="_blank">{{ emptyDescription1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                    
+                                   
+                                {% endif %}  
+            
+                            </div>
+                        </div>
+
+                        <!-- Title tag'ı boş olan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Title tag'ı boş olan adresler:</h3>
+                                {% if  notTitle== "Harika title etiketine sahip olmayan bir sayfa bulunmadı :)" %}
+                                <p>{{notTitle}}</p> 
+                                {% else %}   
+                                <ul>
+                                        {% for notTitle1 in notTitle %}
+                                            <li><a href="{{ notTitle1 }}" target="_blank">{{ notTitle1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}  
+                                
+                            </div>
+                        </div>
+
+                        <!-- Img açıklamasına sahip olmayan sayfalar -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Img açıklamasına sahip olmayan sayfalar:</h3>
+                                {% if  imgAltNot == "Harika IMG açıklmalarına tüm adreslerde yer verilmiş :)" %}
+                                    <p>{{imgAltNot}}</p>
+                                {% else %}
+                                    <ul>
+                                        {% for imgAltNot1 in imgAltNot %}
+                                            <li><a href="{{ imgAltNot1 }}" target="_blank">{{ imgAltNot1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+
+                        <!-- Img açıklaması boş olan sayfalar -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Img açıklaması boş olan sayfalar:</h3>
+                                {% if imgAltEmpty =="Harika img açıklamaları tüm adreslerde dolu görünüyor :)" %}
+                                 <p>{{imgAltEmpty}}</p>   
+                                {% else %}
+                                <ul>
+                                        {% for imgAltEmpty1 in imgAltEmpty %}
+                                            <li><a href="{{ imgAltEmpty1 }}" target="_blank">{{ imgAltEmpty1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uyarı -->
+            <div class="col-md-4">
+                <div class="card border-warning mb-3">
+                    <div class="card-body">
+                        <h2 class="card-title text-warning">Uyarı</h2>
+                        <!-- 4xx durum koduna sahip olan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>4xx durum koduna sahip olan adresler:</h3>
+                                {% if status4xx == "Harika sayfalarda 4xx durum koduna rastlanmadı :)" %}
+                                <p>{{status4xx}}</p>
+                                {% else %}
+                                    <ul>
+                                        {% for status4xx1 in status4xx %}
+                                            <li><a href="{{ status4xx1 }}" target="_blank">{{ status4xx1 }}</a></li>
+                                        {% endfor %}
+                                     </ul> 
+                                
+                                    
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Sayfa Açılış süresi uzun olan adresler -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Sayfa Açılış süresi uzun olan adresler:</h3>
+                                {% if time == "Harika web sayfaların 3 sn gibi kısa bir süreden dahi hızlı açılmakta :)" %}
+                                 <p>{{time}}</p>   
+                                {% else %}
+                                <ul>
+                                        {% for time1 in time %}
+                                            <li><a href="{{ time1 }}" target="_blank">{{ time1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+
+                        <!-- H1 Tag 'ını çift kullanan adresler -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>H1 Tag 'ını çift kullanan adresler:</h3>
+                                {% if h1duplicate == "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)" %}
+                                <p>{{h1duplicate}}</p>
+                                {% else %}
+                                    <ul>
+                                        {% for h1duplicate1 in h1duplicate %}
+                                            <li><a href="{{ h1duplicate1 }}" target="_blank">{{ h1duplicate1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                            
+                            </div>
+                        </div>
+
+                        <!-- Yinelenen meta description kullanım adresler -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Yinelenen meta description kullanım adresler:</h3>
+                                {% if duplicatedmeta is iterable %}
+                                    <ul>
+                                        {% for duplicatedmeta1 in duplicatedmeta %}
+                                            <li><a href="{{ duplicatedmeta1 }}" target="_blank">{{ duplicatedmeta1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                {% else %}
+                                    <p>{{duplicatedmeta}}</p>
+                                {% endif %}
+                            
+                            </div>
+                        </div>
+
+                        <!-- Robots.txt dosyası hakkında -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Robots.txt dosyası hakkında:</h3>
+                                {% if robots == "Robots.txt dosyası bulunamadı" %}
+                                <p>{{robots}}</p>
+                                {% else %}
+                                    <ul>
+                                        {% for robots1 in robots %}
+                                            <li><p>{{robots1}}</p></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                    
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bilgilendirme -->
+            <div class="col-md-4">
+                <div class="card border-info mb-3">
+                    <div class="card-body">
+                        <h2 class="card-title text-info">Bilgilendirme</h2>
+                        <!-- Description' ı Uzun olan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Description' ı Uzun olan adresler:</h3>
+                                {% if descLong == "Harika tüm adreslerde meta açıklamaların uzun bulunmadı :) " %}
+                                <p>{{descLong}}</p>    
+                                {% else %}
+                                <ul>
+                                        {% for descLong1 in descLong %}
+                                            <li><a href="{{ descLong1 }}" target="_blank">{{ descLong1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+
+                        <!-- Description' ı Kısa olan adresler -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Description' ı Kısa olan adresler:</h3>
+                                {% if descShort == "Harika tüm adreslerde meta açıklamanın uzunluğu kısa değil :)" %}
+                                <p>{{descShort}}</p>    
+                                {% else %}
+                                <ul>
+                                        {% for descShort1 in descShort %}
+                                            <li><a href="{{ descShort1 }}" target="_blank">{{ descShort1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+
+                        <!-- Canonical Tag' ı olmayan adresler -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Canonical Tag' ı olmayan adresler:</h3>
+                                {% if notcanonic == "Harika kanonik etikete adreslerde yer verilmiş :)" %}
+                                <p>{{notcanonic}}</p>
+                                {% elif notcanonic == "canonical hakkında bilgi alınamadı etiket hiç bulunmayabilir." %}    
+                                <p>{{notcanonic}}</p>
+                                {% else %}
+                                <ul>
+                                        {% for notcanonic1 in notcanonic %}
+                                            <li><a href="{{ notcanonic1 }}" target="_blank">{{ notcanonic1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <br><br><br>
+    <h1> {{test_sonuc2}}<h1>
+    <br><br><br><p> Lütfen Anasayfaya gidip SEO testin yapmak istediğiniz web adresini giriniz :) <b><p>
+    {% endif %}
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+        crossorigin="anonymous"></script>
 </body>
+
 </html>
