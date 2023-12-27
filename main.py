@@ -273,6 +273,8 @@ def disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp):
                 addr = domainUrl + row["content"]
                 temp.append(addr)
     ROBOTS_TXT_DISALLOW = set(temp)
+    if len(ROBOTS_TXT_DISALLOW) == 0:
+        return "Robots.txt 'nin erişimi engelleyen bir adresi bulunmadı"
     return ROBOTS_TXT_DISALLOW
 
 

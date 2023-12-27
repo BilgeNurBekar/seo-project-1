@@ -13,7 +13,7 @@
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
         <a class="navbar-brand" href="#">Zinu SEO Crawler</a>
-        <div class="collapse navbar-collapse" id="navbarNav">
+        <div class="collapse navbar-collapse" id="navbarNav"> 
             <ul class="navbar-nav">
                 <li class="nav-item ml-auto">
                     <a class="nav-link" href="/">Anasayfa</a>
@@ -39,9 +39,13 @@
                                 <p>{{h1isnot}}</p>
                                 {% else %}    
                                 <ul>
+                                    {% if len(h1isnot)==1 %}
+                                    <li><a href="{{ h1isnot }}" target="_blank">{{ h1isnot }}</a></li>
+                                    {% else %}
                                     {% for h1not in h1isnot %}
                                         <li><a href="{{ h1not }}" target="_blank">{{ h1not }}</a></li>
                                     {% endfor %}
+                                    {% endif %}
                                 </ul>
                                 {% endif %}                    
                             </div>
@@ -55,9 +59,13 @@
                                 <p>{{badstatus}}</p>  
                                 {% else %}  
                                 <ul>
-                                        {% for badstatuss in badstatus %}
+                                    {% if len(badstatus)==1 %}
+                                    <li><a href="{{ badstatus }}" target="_blank">{{ badstatus }}</a></li>
+                                    {% else %}    
+                                    {% for badstatuss in badstatus %}
                                             <li><a href="{{ badstatuss }}" target="_blank">{{ badstatuss }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                     
                                 {% endif %}  
@@ -72,9 +80,13 @@
                                 <p>{{emptyDescription}}</p>
                                 {% else %}
                                 <ul>
+                                    {% if len(emptyDescription)==1 %}
+                                    <li><a href="{{ emptyDescription }}" target="_blank">{{ emptyDescription }}</a></li>
+                                    {% else %}
                                         {% for emptyDescription1 in emptyDescription %}
                                             <li><a href="{{ emptyDescription1 }}" target="_blank">{{ emptyDescription1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %} 
                                     </ul> 
                                     
                                    
@@ -91,9 +103,13 @@
                                 <p>{{notTitle}}</p> 
                                 {% else %}   
                                 <ul>
+                                    {% if len(imgAltNot)==1 %}
+                                    <li><a href="{{ notTitle }}" target="_blank">{{ notTitle }}</a></li>
+                                    {% else %}
                                         {% for notTitle1 in notTitle %}
                                             <li><a href="{{ notTitle1 }}" target="_blank">{{ notTitle1 }}</a></li>
                                         {% endfor %}
+                                    {% endif %}
                                     </ul> 
                                 
                                     
@@ -110,9 +126,13 @@
                                     <p>{{imgAltNot}}</p>
                                 {% else %}
                                     <ul>
+                                        {% if len(imgAltNot)==1 %}
+                                        <li><a href="{{ imgAltNot }}" target="_blank">{{ imgAltNot }}</a></li>
+                                        {% else %}
                                         {% for imgAltNot1 in imgAltNot %}
                                             <li><a href="{{ imgAltNot1 }}" target="_blank">{{ imgAltNot1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -129,9 +149,13 @@
                                  <p>{{imgAltEmpty}}</p>   
                                 {% else %}
                                 <ul>
-                                        {% for imgAltEmpty1 in imgAltEmpty %}
+                                    {% if len(imgAltEmpty)==1 %}
+                                    <li><a href="{{ imgAltEmpty }}" target="_blank">{{ imgAltEmpty }}</a></li>
+                                    {% else %}    
+                                    {% for imgAltEmpty1 in imgAltEmpty %}
                                             <li><a href="{{ imgAltEmpty1 }}" target="_blank">{{ imgAltEmpty1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -155,9 +179,14 @@
                                 <p>{{status4xx}}</p>
                                 {% else %}
                                     <ul>
+                                        {% if len(status4xx)==1 %}
+                                        <li><a href="{{ status4xx }}" target="_blank">{{ status4xx }}</a></li>
+                                        {% else %}
                                         {% for status4xx1 in status4xx %}
+                                        
                                             <li><a href="{{ status4xx1 }}" target="_blank">{{ status4xx1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                      </ul> 
                                 
                                     
@@ -173,9 +202,13 @@
                                  <p>{{time}}</p>   
                                 {% else %}
                                 <ul>
+                                    {% if len(time)==1 %}
+                                    <li><a href="{{ time }}" target="_blank">{{ time }}</a></li>
+                                    {% else %}
                                         {% for time1 in time %}
                                             <li><a href="{{ time1 }}" target="_blank">{{ time1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -192,9 +225,13 @@
                                 <p>{{h1duplicate}}</p>
                                 {% else %}
                                     <ul>
+                                        {% if len(h1duplicate)==1 %}
+                                        <li><a href="{{ h1duplicate }}" target="_blank">{{ h1duplicate }}</a></li>
+                                        {% else %}
                                         {% for h1duplicate1 in h1duplicate %}
                                             <li><a href="{{ h1duplicate1 }}" target="_blank">{{ h1duplicate1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -209,6 +246,7 @@
                                 <h3>Yinelenen meta description kullanım adresler:</h3>
                                 {% if duplicatedmeta is iterable %}
                                     <ul>
+
                                         {% for duplicatedmeta1 in duplicatedmeta %}
                                             <li><a href="{{ duplicatedmeta1 }}" target="_blank">{{ duplicatedmeta1 }}</a></li>
                                         {% endfor %}
@@ -226,11 +264,18 @@
                                 <h3>Robots.txt dosyası hakkında:</h3>
                                 {% if robots == "Robots.txt dosyası bulunamadı" %}
                                 <p>{{robots}}</p>
+                                {% if robots == "Robots.txt 'nin erişimi engelleyen bir adresi bulunmadı" %}
                                 {% else %}
+
                                     <ul>
+                                        {% if len(robots)==1 %}
+                                        <li><p>{{robots}}</p></li>
+                                        {% else %}
                                         {% for robots1 in robots %}
+                                        
                                             <li><p>{{robots1}}</p></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -255,9 +300,13 @@
                                 <p>{{descLong}}</p>    
                                 {% else %}
                                 <ul>
+                                    {% if len(descLong)==1 %}
+                                    <li><a href="{{ descLong }}" target="_blank">{{ descLong }}</a></li>
+                                    {% else %}
                                         {% for descLong1 in descLong %}
                                             <li><a href="{{ descLong1 }}" target="_blank">{{ descLong1 }}</a></li>
                                         {% endfor %}
+                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -274,9 +323,13 @@
                                 <p>{{descShort}}</p>    
                                 {% else %}
                                 <ul>
+                                    {% if len(descShort)==1 %}
+                                    <li><a href="{{ descShort }}" target="_blank">{{ descShort }}</a></li>
+                                    {% else %}
                                         {% for descShort1 in descShort %}
                                             <li><a href="{{ descShort1 }}" target="_blank">{{ descShort1 }}</a></li>
                                         {% endfor %}
+                                    {% endif %}
                                     </ul> 
                                 
                                     
@@ -295,9 +348,13 @@
                                 <p>{{notcanonic}}</p>
                                 {% else %}
                                 <ul>
+                                    {% if len(notcanonic)==1 %}
+                                    <li><a href="{{ notcanonic }}" target="_blank">{{ notcanonic}}</a></li>
+                                    {% else %}
                                         {% for notcanonic1 in notcanonic %}
                                             <li><a href="{{ notcanonic1 }}" target="_blank">{{ notcanonic1 }}</a></li>
                                         {% endfor %}
+                                    {% endif %}
                                     </ul> 
                                 
                                     
