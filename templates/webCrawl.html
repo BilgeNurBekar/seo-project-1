@@ -39,13 +39,9 @@
                                 <p>{{h1isnot}}</p>
                                 {% else %}    
                                 <ul>
-                                    {% if len(h1isnot)==1 %}
-                                    <li><a href="{{ h1isnot }}" target="_blank">{{ h1isnot }}</a></li>
-                                    {% else %}
                                     {% for h1not in h1isnot %}
                                         <li><a href="{{ h1not }}" target="_blank">{{ h1not }}</a></li>
                                     {% endfor %}
-                                    {% endif %}
                                 </ul>
                                 {% endif %}                    
                             </div>
@@ -59,16 +55,29 @@
                                 <p>{{badstatus}}</p>  
                                 {% else %}  
                                 <ul>
-                                    {% if len(badstatus)==1 %}
-                                    <li><a href="{{ badstatus }}" target="_blank">{{ badstatus }}</a></li>
-                                    {% else %}    
-                                    {% for badstatuss in badstatus %}
+                                        {% for badstatuss in badstatus %}
                                             <li><a href="{{ badstatuss }}" target="_blank">{{ badstatuss }}</a></li>
                                         {% endfor %}
-                                        {% endif %}
                                     </ul> 
                                     
                                 {% endif %}  
+                            </div>
+                        </div>
+                        <!-- 5xx server error hatası olan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>5xx durum koduna sahip olan adresler:</h3>
+                                {% if  status5xx =="Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz." %}
+                                <p>{{status5xx}}</p>
+                                {% elif  status5xx == "Harika sayfalarda 5xx server error' a rastlanmadı :)" %}
+                                <p>{{status5xx}}</p>
+                                {% else %}    
+                                <ul>
+                                    {% for status5xx1 in status5xx %}
+                                        <li><a href="{{ status5xx1 }}" target="_blank">{{ status5xx1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}                    
                             </div>
                         </div>
 
@@ -80,13 +89,9 @@
                                 <p>{{emptyDescription}}</p>
                                 {% else %}
                                 <ul>
-                                    {% if len(emptyDescription)==1 %}
-                                    <li><a href="{{ emptyDescription }}" target="_blank">{{ emptyDescription }}</a></li>
-                                    {% else %}
                                         {% for emptyDescription1 in emptyDescription %}
                                             <li><a href="{{ emptyDescription1 }}" target="_blank">{{ emptyDescription1 }}</a></li>
                                         {% endfor %}
-                                        {% endif %} 
                                     </ul> 
                                     
                                    
@@ -103,13 +108,9 @@
                                 <p>{{notTitle}}</p> 
                                 {% else %}   
                                 <ul>
-                                    {% if len(imgAltNot)==1 %}
-                                    <li><a href="{{ notTitle }}" target="_blank">{{ notTitle }}</a></li>
-                                    {% else %}
                                         {% for notTitle1 in notTitle %}
                                             <li><a href="{{ notTitle1 }}" target="_blank">{{ notTitle1 }}</a></li>
                                         {% endfor %}
-                                    {% endif %}
                                     </ul> 
                                 
                                     
@@ -117,51 +118,26 @@
                                 
                             </div>
                         </div>
-
-                        <!-- Img açıklamasına sahip olmayan sayfalar -->
-                        <div class="card border-light mb-3">
+                           <!-- H1 Tag 'ını çift kullanan adresler -->
+                           <div class="card border-light">
                             <div class="card-body">
-                                <h3>Img açıklamasına sahip olmayan sayfalar:</h3>
-                                {% if  imgAltNot == "Harika IMG açıklmalarına tüm adreslerde yer verilmiş :)" %}
-                                    <p>{{imgAltNot}}</p>
+                                <h3>H1 Tag 'ını çift kullanan adresler:</h3>
+                                {% if h1duplicate == "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)" %}
+                                <p>{{h1duplicate}}</p>
                                 {% else %}
                                     <ul>
-                                        {% if len(imgAltNot)==1 %}
-                                        <li><a href="{{ imgAltNot }}" target="_blank">{{ imgAltNot }}</a></li>
-                                        {% else %}
-                                        {% for imgAltNot1 in imgAltNot %}
-                                            <li><a href="{{ imgAltNot1 }}" target="_blank">{{ imgAltNot1 }}</a></li>
+                                        {% for h1duplicate1 in h1duplicate %}
+                                            <li><a href="{{ h1duplicate1 }}" target="_blank">{{ h1duplicate1 }}</a></li>
                                         {% endfor %}
-                                        {% endif %}
                                     </ul> 
                                 
                                     
                                 {% endif %}
-                                
+                            
                             </div>
                         </div>
 
-                        <!-- Img açıklaması boş olan sayfalar -->
-                        <div class="card border-light">
-                            <div class="card-body">
-                                <h3>Img açıklaması boş olan sayfalar:</h3>
-                                {% if imgAltEmpty =="Harika img açıklamaları tüm adreslerde dolu görünüyor :)" %}
-                                 <p>{{imgAltEmpty}}</p>   
-                                {% else %}
-                                <ul>
-                                    {% if len(imgAltEmpty)==1 %}
-                                    <li><a href="{{ imgAltEmpty }}" target="_blank">{{ imgAltEmpty }}</a></li>
-                                    {% else %}    
-                                    {% for imgAltEmpty1 in imgAltEmpty %}
-                                            <li><a href="{{ imgAltEmpty1 }}" target="_blank">{{ imgAltEmpty1 }}</a></li>
-                                        {% endfor %}
-                                        {% endif %}
-                                    </ul> 
-                                
-                                    
-                                {% endif %}
-                            </div>
-                        </div>
+                        
                     </div>
                 </div>
             </div>
@@ -179,14 +155,9 @@
                                 <p>{{status4xx}}</p>
                                 {% else %}
                                     <ul>
-                                        {% if len(status4xx)==1 %}
-                                        <li><a href="{{ status4xx }}" target="_blank">{{ status4xx }}</a></li>
-                                        {% else %}
                                         {% for status4xx1 in status4xx %}
-                                        
                                             <li><a href="{{ status4xx1 }}" target="_blank">{{ status4xx1 }}</a></li>
                                         {% endfor %}
-                                        {% endif %}
                                      </ul> 
                                 
                                     
@@ -199,54 +170,76 @@
                             <div class="card-body">
                                 <h3>Sayfa Açılış süresi uzun olan adresler:</h3>
                                 {% if time == "Harika web sayfaların 3 sn gibi kısa bir süreden dahi hızlı açılmakta :)" %}
-                                 <p>{{time}}</p>   
+                                <p>{{time}}</p>   
                                 {% else %}
                                 <ul>
-                                    {% if len(time)==1 %}
-                                    <li><a href="{{ time }}" target="_blank">{{ time }}</a></li>
-                                    {% else %}
-                                        {% for time1 in time %}
-                                            <li><a href="{{ time1 }}" target="_blank">{{ time1 }}</a></li>
-                                        {% endfor %}
-                                        {% endif %}
+                                    {% for time1 in time %}
+                                        <li><a href="{{ time1 }}" target="_blank">{{ time1 }}</a></li>
+                                    {% endfor %}
                                     </ul> 
-                                
-                                    
                                 {% endif %}
                                 
                             </div>
                         </div>
 
-                        <!-- H1 Tag 'ını çift kullanan adresler -->
-                        <div class="card border-light">
+                        <!-- Img açıklamasına sahip olmayan sayfalar -->
+                        <div class="card border-light mb-3">
                             <div class="card-body">
-                                <h3>H1 Tag 'ını çift kullanan adresler:</h3>
-                                {% if h1duplicate == "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)" %}
-                                <p>{{h1duplicate}}</p>
+                                <h3>Img açıklamasına sahip olmayan sayfalar:</h3>
+                                {% if  imgAltNot == "Harika IMG açıklmalarına tüm adreslerde yer verilmiş :)" %}
+                                    <p>{{imgAltNot}}</p>
                                 {% else %}
                                     <ul>
-                                        {% if len(h1duplicate)==1 %}
-                                        <li><a href="{{ h1duplicate }}" target="_blank">{{ h1duplicate }}</a></li>
-                                        {% else %}
-                                        {% for h1duplicate1 in h1duplicate %}
-                                            <li><a href="{{ h1duplicate1 }}" target="_blank">{{ h1duplicate1 }}</a></li>
+                                        {% for imgAltNot1 in imgAltNot %}
+                                            <li><a href="{{ imgAltNot1 }}" target="_blank">{{ imgAltNot1 }}</a></li>
                                         {% endfor %}
-                                        {% endif %}
                                     </ul> 
                                 
                                     
                                 {% endif %}
-                            
+                                
                             </div>
                         </div>
 
+                        <!-- Img açıklaması boş olan sayfalar -->
+                        <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Img açıklaması boş olan sayfalar:</h3>
+                                {% if imgAltEmpty =="Harika img açıklamaları tüm adreslerde dolu görünüyor :)" %}
+                                 <p>{{imgAltEmpty}}</p>   
+                                {% else %}
+                                <ul>
+                                        {% for imgAltEmpty1 in imgAltEmpty %}
+                                            <li><a href="{{ imgAltEmpty1 }}" target="_blank">{{ imgAltEmpty1 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                            </div>
+                        </div>
+                        <!-- IMG redirect url kullanan adresler -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Img Redirect Url kullanan adresler: </h3>
+                                {% if redirectImg == "Harika img etiketlerinde bir web adresinden kaynak bulunmadı :)" %}
+                                <p>{{redirectImg}}</p>
+                                {% else %}
+                                    <ul>
+                                        {% for redirectImg1 in redirectImg %}
+                                            <li><a href="{{ redirectImg1 }}" target="_blank">{{ redirectImg1 }}</a></li>
+                                        {% endfor %}
+                                     </ul>
+                                     {% endif %}
+                            
+                                    </div>
+                                </div>
                         <!-- Yinelenen meta description kullanım adresler -->
                         <div class="card border-light">
                             <div class="card-body">
                                 <h3>Yinelenen meta description kullanım adresler:</h3>
                                 {% if duplicatedmeta is iterable %}
                                     <ul>
-
                                         {% for duplicatedmeta1 in duplicatedmeta %}
                                             <li><a href="{{ duplicatedmeta1 }}" target="_blank">{{ duplicatedmeta1 }}</a></li>
                                         {% endfor %}
@@ -264,18 +257,14 @@
                                 <h3>Robots.txt dosyası hakkında:</h3>
                                 {% if robots == "Robots.txt dosyası bulunamadı" %}
                                 <p>{{robots}}</p>
-                                {% if robots == "Robots.txt 'nin erişimi engelleyen bir adresi bulunmadı" %}
+                                {% elif robots == "Robots.txt 'nin erişimi engelleyen bir adresi bulunmadı"%}
+                                <p>{{robots}}</p>
                                 {% else %}
 
                                     <ul>
-                                        {% if len(robots)==1 %}
-                                        <li><p>{{robots}}</p></li>
-                                        {% else %}
                                         {% for robots1 in robots %}
-                                        
                                             <li><p>{{robots1}}</p></li>
                                         {% endfor %}
-                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -300,13 +289,9 @@
                                 <p>{{descLong}}</p>    
                                 {% else %}
                                 <ul>
-                                    {% if len(descLong)==1 %}
-                                    <li><a href="{{ descLong }}" target="_blank">{{ descLong }}</a></li>
-                                    {% else %}
                                         {% for descLong1 in descLong %}
                                             <li><a href="{{ descLong1 }}" target="_blank">{{ descLong1 }}</a></li>
                                         {% endfor %}
-                                        {% endif %}
                                     </ul> 
                                 
                                     
@@ -323,13 +308,9 @@
                                 <p>{{descShort}}</p>    
                                 {% else %}
                                 <ul>
-                                    {% if len(descShort)==1 %}
-                                    <li><a href="{{ descShort }}" target="_blank">{{ descShort }}</a></li>
-                                    {% else %}
                                         {% for descShort1 in descShort %}
                                             <li><a href="{{ descShort1 }}" target="_blank">{{ descShort1 }}</a></li>
                                         {% endfor %}
-                                    {% endif %}
                                     </ul> 
                                 
                                     
@@ -337,6 +318,46 @@
                                 
                             </div>
                         </div>
+
+                         <!-- Redirect 301 status code  -->
+                         <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Redirect 301 durum koduna sahip olan adresler: </h3>
+                                {% if status301 == "Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz." %}
+                                <p>{{status301}}</p>  
+                                {% elif status301 == "Harika sayfalarda 301 kaynak kalıcı olarak taşındı durum koduna rastlanmadı :)" %}
+                                <p>{{status301}}</p>  
+                                {% else %}
+                                <ul>
+                                        {% for status3011 in status301 %}
+                                            <li><a href="{{ status3011 }}" target="_blank">{{status3011 }}</a></li>
+                                        {% endfor %}
+                                    </ul> 
+                                
+                                    
+                                {% endif %}
+                                
+                            </div>
+                        </div>
+
+                         <!-- Redirect 302 status code  -->
+                         <div class="card border-light">
+                            <div class="card-body">
+                                <h3>Redirect 301 durum koduna sahip olan adresler: </h3>
+                                {% if status302 == "Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz." %}
+                                <p>{{status302}}</p>  
+                                {% elif status302 == "Harika sayfalarda 302 kaynak geçici olarak taşındı durum koduna rastlanmadı :)" %}
+                                <p>{{status302}}</p>  
+                                {% else %}
+                                <ul>
+                                        {% for status3021 in status302 %}
+                                            <li><a href="{{ status3021 }}" target="_blank">{{status3021 }}</a></li>
+                                        {% endfor %}
+                                    </ul>   
+                                {% endif %}
+                            </div>
+                        </div>
+
 
                         <!-- Canonical Tag' ı olmayan adresler -->
                         <div class="card border-light">
@@ -348,13 +369,9 @@
                                 <p>{{notcanonic}}</p>
                                 {% else %}
                                 <ul>
-                                    {% if len(notcanonic)==1 %}
-                                    <li><a href="{{ notcanonic }}" target="_blank">{{ notcanonic}}</a></li>
-                                    {% else %}
                                         {% for notcanonic1 in notcanonic %}
                                             <li><a href="{{ notcanonic1 }}" target="_blank">{{ notcanonic1 }}</a></li>
                                         {% endfor %}
-                                    {% endif %}
                                     </ul> 
                                 
                                     
