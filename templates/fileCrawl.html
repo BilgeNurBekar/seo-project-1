@@ -242,41 +242,9 @@
                             
                                     </div>
                                 </div>
-                        <!-- Yinelenen meta description kullanım adresler -->
-                        <div class="card border-light">
-                            <div class="card-body">
-                                <h3>Yinelenen meta description kullanım adresler:</h3>
-                                {% if duplicatedmeta is iterable %}
-                                    <ul>
-                                        {% for duplicatedmeta1 in duplicatedmeta %}
-                                            <li><a href="{{ duplicatedmeta1 }}" target="_blank">{{ duplicatedmeta1 }}</a></li>
-                                        {% endfor %}
-                                    </ul> 
-                                {% else %}
-                                    <p>{{duplicatedmeta}}</p>
-                                {% endif %}
-                            
-                            </div>
-                        </div>
+                        
 
-                        <!-- Robots.txt dosyası hakkında -->
-                        <div class="card border-light">
-                            <div class="card-body">
-                                <h3>Robots.txt dosyası hakkında:</h3>
-                                {% if robots == "Robots.txt dosyası bulunamadı" %}
-                                <p>{{robots}}</p>
-                                {% elif robots == "Robots.txt 'nin erişimi engelleyen bir adresi bulunmadı"%}
-                                <p>{{robots}}</p>
-                                {% else %}
-                                    <ul>
-                                        {% for robots1 in robots %}
-                                            <li><p>{{robots1}}</p></li>
-                                        {% endfor %}
-                                    </ul> 
-                                {% endif %}
-                    
-                            </div>
-                        </div>
+
                     </div>
                 </div>
             </div>
@@ -383,12 +351,18 @@
         </div>
     </div>
     {% else %}
-    <br><br><br>
-    <div class="container">
-        <br><br><br><p test-center> Lütfen Anasayfaya gidip SEO testin yapmak istediğiniz formatı seçiniz :) <b><p>
-        </div>
-    {% endif %}
-
+    <br><br><br><br><br>
+    <div class="container text-center">
+    <h1> Lütfen Anasayfaya gidip SEO testin yapmak istediğiniz formatı seçiniz :) </yh1>
+        <br><br><br>
+        <p> {{test_sonuc2}}<b><p>
+    </div>
+        {% endif %}
+    
+  <!-- Footer -->
+  <footer class="navbar navbar-dark bg-primary text-light fixed-bottom text-center" style="font-size: 20px; padding: 15px;">
+    <span class="navbar-text">Zinu SEO Crawler 2024</span>
+</footer>
    
 </body>
 

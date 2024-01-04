@@ -8,12 +8,10 @@ from waitress import serve
 from urllib.parse import urlparse 
 import time 
 from werkzeug.utils import secure_filename
-from urllib.parse import urljoin
 
 app = Flask(__name__)
  
 
-urlList = []
 
 @app.route('/') #decorator kullanmış buna göre olmasını istiyorsan yap demektir. bu kullanım 
 def index(): #ana sayfayı render eder
@@ -22,10 +20,6 @@ def index(): #ana sayfayı render eder
 @app.route('/anasayfa') #decorator kullanmış buna göre olmasını istiyorsan yap demektir. bu kullanım 
 def anasayfa(): #ana sayfayı render eder 
     return render_template('anasayfa.html') #html sayfası oluşturan fonksiyon render_template
-
-@app.route('/file', methods=['GET']) #decorator kullanmış buna göre olmasını istiyorsan yap demektir. bu kullanım 
-def file(): #ana sayfayı render eder 
-        return render_template('fileUpload.html') #html sayfası oluşturan fonksiyon render_template
 
 
 def isValidUrl(url, jl_file_name):
@@ -62,7 +56,7 @@ def read_df_from_jl(jl_file_name):
     except ValueError as e:
         print(f"Hata: JSON dosyasını okuma sırasında bir sorun oluştu: {e}")
         return None
-    
+
 
 def deleteFile(jl_file_name):
     #with open(jl_file_name, 'w') as dosya:
@@ -79,104 +73,49 @@ def deleteFile(jl_file_name):
 
 
 
-ALLOWED_EXTENSIONS = {'html'} #izin verilen dosya uzantıları
-app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
-UPLOAD_FOLDER = 'static/yuklemeler' #yüklenen ddosyaların saklanacağı yer 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-MAX_FILES_ALLOWED = 5  #yükleneblecek max dosya sayısı
+#def clear_lists():
+#    global H1_NOT, STATUS_CODE_4xx, H1_DUPLICATE, load_times,STATUS_CODE_BAD,DESCRIPTION_META, DESCRIPTION_EMPTY,TITLE_EMPTY,DESCRIPTION_LONG, DESCRIPTION_SHORT,CANONICAL_NOT,IMG_ALT_NOT,ROBOTS_TXT_DISALLOW,robotsIsNot,IMG_ALT_EMPTY,canonicInfo
+#    H1_NOT = []
+#    STATUS_CODE_4xx = []
+#    H1_DUPLICATE = []
+#    STATUS_CODE_BAD = []
+#    load_times = []
+#    DESCRIPTION_META = []
+#    DESCRIPTION_EMPTY = []
+#    TITLE_EMPTY = []
+#    DESCRIPTION_LONG = []
+#    DESCRIPTION_SHORT = []
+#    CANONICAL_NOT = []
+#    IMG_ALT_NOT = []
+#    ROBOTS_TXT_DISALLOW = []
+#    robotsIsNot = None
+#    IMG_ALT_EMPTY = []
+#    canonicInfo = ""
+    
+#crawl(url, output_file, follow_links=True, custom_settings={'DOWNLOAD_DELAY': 1})
+#df = pd.read_json(output_file, lines=True)
+#htmlOut = df.to_html(f"{url.replace('http://', '').replace('https://', '').replace('/', '').replace('.com', '')}.html")     
+#return htmlOut is not None
 
 
-
-@app.route('/file', methods=['POST','GET'])
-def uploadFile():
-    if request.method=="POST":
-        if 'dosya[]' in request.files:
-            files = request.files.getlist('dosya[]') #birden fazla yüklemeyi kontrol eder.
-            if len(files) > MAX_FILES_ALLOWED:
-                labelFileCount = "En fazla 5 adet dosya yüklenebilir"
-                return render_template ("fileUpload.html", labelFileCount = labelFileCount)
-
-            for file in files:
-                if file and allowedFile(file.filename): 
-                    filename = secure_filename(file.filename)
-                    try:
-                        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                        file.save(file_path)
-                    except Exception as e:
-                        return render_template("fileUpload.html", labelFileCount=str(e))
-                if file and not allowedFile(file.filename):
-                    return redirect(url_for('error_404'))
-            global urlList
-            urlList = [urljoin(request.url_root, f'html_files/{secure_filename(file.filename)}') for file in files]  #yüklenen dosyalar url formatına dönüştürüldü
-            print("***********************")
-            print("Dosya URL'leri:", urlList)
-            print("***********************")
-            labelFileCount = "Yükleme Başarılı. Taramayı Başlatın" 
-            return render_template("fileUpload.html", labelFileCount = labelFileCount)
-        return 'File Upload failed'
-        
-    else:
-        test_sonuc2= "Daha sonra tarama işlemi için dosya yükleyiniz. "
-        return render_template("fileCrawl.html", test_sonuc2=test_sonuc2)
-
-def allowedFile(filename): #izin verilen dosya formatını kontrol eder
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in app.config['ALLOWED_EXTENSIONS']
-
-@app.route('/html_files/<path:page_name>') #sayfaların yayınlanacağı uzantı
-def serve_page(page_name):
-    # Yüklenen HTML sayfalarını sunmak için bu endpoint'i kullanın
-    return send_from_directory(app.config['UPLOAD_FOLDER'], page_name)
+#def SEOTestOnem(onem, fonkParamatre):
+#    dereceler = {
+#        'kritik':[[H1_NOT],[STATUS_CODE_BAD],[DESCRIPTION_EMPTY],[TITLE_EMPTY],[IMG_ALT_NOT],[IMG_ALT_EMPTY]],
+#        'uyari':[[STATUS_CODE_4xx],[load_times],[H1_DUPLICATE],[ROBOTS_TXT_DISALLOW],robotsIsNot],
+#        'bilgilendirme':[[DESCRIPTION_LONG],[DESCRIPTION_SHORT],[CANONICAL_NOT],canonicInfo]
+#    }
+#    return fonkParamatre in dereceler.get(onem, [])
 
 
-def createForFile(urlList,jl_file_name): #yüklenen fileların taranması için liste tabanlı tarama 
-    crawl(urlList, jl_file_name, follow_links=False)
-
-@app.route("/file/crawl", methods=['POST', 'GET'])
-def fileCrawler():
-    global urlList 
-    test_sonuc = "TEST SONUÇLARI" #webCrawler.html için oluşturulan eğer sayfa taranmmışsa dönen değişken
-    jl_file_name = "temp.jl"         
-    startTime = time.time()
-    createForFile(urlList,jl_file_name)# 1. Adım: .jl dosyası oluşturuldu
-    df = read_df_from_jl(jl_file_name)# 2. Adım: .jl dosyasını okuyarak DataFrame oluşturuluyor
-    if df is not None and not df.empty:
-        IMG_ALT_EMPTY = []
-        IMG_ALT_NOT = []
-        temp =[] 
-        canonicInfo = None
-        DESCRIPTION_SHORT = []
-        DESCRIPTION_LONG = []
-        CANONICAL_NOT =[]
-        canonicInfo = ""
-        load_times = []
-        H1_NOT = []
-        STATUS_CODE_4xx = []
-        H1_DUPLICATE = []
-        STATUS_CODE_BAD=[]
-        DESCRIPTION_EMPTY = []
-        TITLE_EMPTY = []
-        REDIRECT_IMG_URL = []
-        STATUS_CODE_5XX = []
-        STATUS_CODE_301 = []
-        STATUS_CODE_302 = []
-        endTime = time.time()
-        crawlingTime = endTime - startTime
-        hours, minutes, seconds = formatTime(crawlingTime) # tarama süresini saat dakika saniye olarak verir
-        #clear_lists()
-        print(df.columns)
-        # HTML şablonuna sonuçları gönder
-        deleteFile(jl_file_name)
-                
-                
-        return render_template('fileCrawl.html', test_sonuc1=test_sonuc, h1isnot=h1Avaliable(H1_NOT, df,temp=[]),badstatus=badStatus(STATUS_CODE_BAD, df,temp=[]), status4xx=clientError(STATUS_CODE_4xx,df, temp=[]),
-                                        h1duplicate=duplicateH1(H1_DUPLICATE,df, temp=[]),
-                                    time=pageOpeningTime(load_times,df, temp=[]),emptyDescription=descriptionMissing(DESCRIPTION_EMPTY,df,temp=[]), 
-                                    notTitle=titleEmpty(TITLE_EMPTY, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,df,temp=[]),
-                                    notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,df, temp=[]), 
-                                    imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,df,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,df,temp)
-                                    ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
-                                        crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
-
+#def SEOtest(fonkParametre):
+#    def decorator(func):
+#        def wrapper(onem):
+#            if SEOTestOnem(onem, fonkParametre):
+#                func(onem)
+#            else:
+#                return "yanlış aksiyon"
+#        return wrapper
+#    return decorator
 
 
 def h1Avaliable(H1_NOT,df,temp):
@@ -474,9 +413,8 @@ def formatTime(seconds): #tarama süresini saat.dakika.saniye formatına dönü�
     return int(hours), int(minutes), seconds
 
 
-
-@app.route('/web', methods=['POST', 'GET'])
 @app.route('/web/crawl', methods=['POST', 'GET'])
+@app.route('/web', methods=['POST', 'GET'])
 def webCrawlerFromForm():
     if request.method == "POST":
         url = request.form.get('url')
@@ -532,7 +470,6 @@ def webCrawlerFromForm():
                                     imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,df,temp=[]),robots =disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,df,temp)
                                     ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
                                         crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
-
         if not y:
             if df is not None and "errors" in df.columns  : #oluşturulan işlevsiz df silinecektir
                 deleteFile(jl_file_name) 

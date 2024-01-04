@@ -1,4 +1,4 @@
 advertools==0.13.5
 Flask==3.0.0
 pandas==2.1.4
-waitress ==2.1.2
+waitress==2.1.2

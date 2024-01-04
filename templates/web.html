@@ -1,0 +1,87 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zinu SEO Crawler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+</head>
+<body>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+    <div class= class="container-xxl bg-white p-0">
+      <!-- Spinner Start --><!--
+      <div id="spinner" class="bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-grow text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>-->
+    <!-- Spinner End -->
+    <!-- Navbar -->
+    <nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-primary text-light flex-row ">
+        <a class="navbar-brand font-weight-bolder" href="/">Zinu  Crawler SEO TEST</a>
+        
+          <div class="navbar-nav-scroll">
+            
+            <ul class="navbar-nav  mt+2 mt-mr+2 flex-row">
+              <li class="nav-item ">
+                <a class="nav-link pr-5" href="/anasayfa">Anasayfa <span class="sr-only">(current)</span></a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link pr-5 " href="#">Biz Kimiz?</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link pr-5 " href="#">Görüşleriniz</a>
+              </li>
+            </ul>
+           
+          </div>
+    </nav>
+
+    <br><br><br><br><br><br><br>
+    <div class="container-fluid">
+        <br><br><br>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6 offset-md-3 text-center">
+                    <h2>Lütfen Taramak İstediğiniz Sitenin Url Adresini Giriniz</h2>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid">
+            <br><br><br>
+            <form id="webCrawlerForm" action="/web/crawl" method="post" class="text-center">
+
+                <div class="row justify-content-center">
+                    <div class="col-sm-5">
+                        <input class="form-control form-control-lg" type="text" id="webCrawlerTextbox" name="url" placeholder="https://example.com" required>
+                    </div>
+                    <div class="col-sm-3">
+                        <button type="submit" id="btnTaraW" class="btn btn-success btn-lg ">Tara</button>
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-3">
+                    <div class="col-sm-5">
+                        <input type="hidden" name="labelIndex" value="{{ labelIndex }}">
+                        <label for="webCrawlerTextbox">{{ labelIndex }}</label>
+                    </div>
+                    <div class="col-sm-3">
+                        <input class="btn btn-primary btn-lg " type="reset" value="Sıfırla">
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer class="navbar navbar-dark bg-primary text-light fixed-bottom text-center" style="font-size: 20px; padding: 15px;">
+        <span class="navbar-text">Zinu SEO Crawler 2024</span>
+    </footer>
+
+</body>
+
+</html>

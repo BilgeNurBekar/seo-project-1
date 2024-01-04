@@ -1,0 +1,122 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zinu SEO Crawler</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+ <!-- Navbar -->
+ <nav class="fixed-top navbar navbar-expand-lg navbar-dark bg-primary text-light flex-row ">
+    <a class="navbar-brand font-weight-bolder" href="/">Zinu  Crawler SEO TEST</a>
+    
+      <div class="navbar-nav-scroll">
+        
+        <ul class="navbar-nav  mt+2 mt-mr+2 flex-row">
+          <li class="nav-item ">
+            <a class="nav-link pr-5" href="/anasayfa">Anasayfa <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link pr-5 " href="#">Biz Kimiz?</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link pr-5 " href="#">Görüşleriniz</a>
+          </li>
+        </ul>
+       
+      </div>
+</nav>
+
+<br><br><br><br><br><br><br>
+
+<div class="container-fluid">
+  <br><br><br>
+  <div class="container-fluid">
+      <div class="row">
+          <div class="col-md-6 offset-md-3 text-center">
+              <h2>Lütfen Taramak İstediğiniz .html Uzantılı Dosya/Dosyaları Yükleyiniz</h2>
+          </div>
+      </div>
+  </div>
+  <div class="container-fluid">
+      <br><br><br>
+      <form id="fileUpload" action="/file" method="post" class="text-center"  enctype="multipart/form-data">
+
+          <div class="row justify-content-center">
+              <div class="col-sm-5">
+                  <input class="form-control btn btn-outline-primary form-control-lg" type="file" id="index" name="dosya[]" multiple accept=".html" max=5 required>
+              </div>
+              <div class="col-sm-3">
+                  <button type="submit" id="fileSubmit" data-toggle="button" aria-pressed="false"  value="Upload" class="btn btn-success btn-lg ">Dosya Yükle </button>
+              </div>
+              <div class="col-sm-0">
+                <input class="btn btn-primary btn-lg " type="reset" value="  Sıfırla  ">
+          </div>
+          <div class = "container">
+          <div class="row justify-content-center mt-3">
+              <div class="col-sm-6 col-lg-6">
+                {% if labelFileCount %}
+                <input type="hidden" name="labelFileCount" value="{{ labelFileCount }}">
+                <br><label for="index">{{ labelFileCount }}</label><b>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </form>
+      <br>
+      <form id="dosyaTara", action="/file/crawl"  method="post" class="text-center" style="display: none;">
+        <div class="container"></div>
+        <div class="row justify-content-center mt-3">
+          <div class="col-sm-6 col-lg-6 ">
+            <button type="submit"  data-toggle="button" aria-pressed="false"  value="Upload" class="btn btn-success btn-lg ">       Tara      </button>
+          </div>
+        </div>
+      </div>
+      </form>
+
+
+        {% if labelFileCount == "Yükleme Başarılı. Taramayı Başlatın" %}
+        <script>
+            // JavaScript kullanarak form kontrolü
+            document.getElementById('dosyaTara').style.display = 'block';  
+            //document.getElementById('indexForm').style.display = 'block';  // indexForm'u gizle
+            document.getElementById("fileSubmit").disabled = 'true'
+           
+        </script>
+        {% endif%}
+
+  </div>
+</div>
+
+
+
+
+<!--
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12 m-2">
+        <form  id = "fileUpload" method="post" enctype="multipart/form-data">
+            <input type="file" id="index" name="dosya[]" multiple accept=".html" required> <!-- burada kaç aet dosya seçileceğine karar ver-->
+        <!---   <button type="submit" class="btn btn-success" data-toggle="button" aria-pressed="false"  value="Upload">Dosya Yükle</button>
+            <div>
+            <input class="btn btn-primary btn-ml " type="reset" value="Sıfırla">
+          </div>
+          </form>
+        </div>
+    </div>
+</div>
+</div> --> 
+
+ <!-- Footer -->
+ <footer class="navbar navbar-dark bg-primary text-light fixed-bottom text-center" style="font-size: 20px; padding: 15px;">
+  <span class="navbar-text">Zinu SEO Crawler 2024</span>
+</footer>
+</div>
+</body>
+
+</html>
