@@ -13,7 +13,6 @@ SEO crawler projesi, sayfa içi SEO hakkında dosya ve url tabanlı inceleme imk
 ```bash
 pip install -r requirements.txt
 
-```bash
 web: waitress-serve --host=127.0.0.1 --port=5000 main:app
 
  
