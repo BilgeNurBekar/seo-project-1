@@ -12,8 +12,9 @@ SEO crawler projesi, sayfa içi SEO hakkında dosya ve url tabanlı inceleme imk
 
 ```python 
 pip install -r requirements.txt
+```
 
 ```python
 web: waitress-serve --host=127.0.0.1 --port=5000 main:app
-
+```
  
