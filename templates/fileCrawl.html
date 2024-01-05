@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Zinu SEO Crawler</title>
+    <title>Dosya Tarama</title>
+    <meta name="description" content="Web sitelerinin ve html dosyalarınızın SEO uygunluğunu test edin">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css"
         integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
 </head>
@@ -45,6 +46,8 @@
                             <div class="card-body">
                                 <h3>H1 etiketine sahip olmayan adresler:</h3>
                                 {% if  h1isnot =="Harika H1 etiketi kullanılmayan sayfaya rastlanmadı :)" %}
+                                <p>{{h1isnot}}</p>
+                                {% elif h1isnot ==  "H1 etiketi hakkında bilgi alınamadı. H1 etiketi kullanılmamış." %}
                                 <p>{{h1isnot}}</p>
                                 {% else %}    
                                 <ul>
@@ -96,6 +99,8 @@
                                 <h3>Description' ı boş olan adresler:</h3>
                                 {% if  emptyDescription== "Harika meta description'a sahip olmayan bir adres ile karşılaşılmadı :) " %}
                                 <p>{{emptyDescription}}</p>
+                                {% elif emptyDescription=="Descripton hakkında bilgi alınamadı. Description kullanılmamış" %}
+                                <p>{{emptyDescription}}</p>
                                 {% else %}
                                 <ul>
                                         {% for emptyDescription1 in emptyDescription %}
@@ -115,6 +120,8 @@
                                 <h3>Title tag'ı boş olan adresler:</h3>
                                 {% if  notTitle== "Harika title etiketine sahip olmayan bir sayfa bulunmadı :)" %}
                                 <p>{{notTitle}}</p> 
+                                {% elif  notTitle == "Title etiketi hakkında bilg alınamadı. /Title etiketi kullanılmamış" %}
+                                <p>{{notTitle}}</p>
                                 {% else %}   
                                 <ul>
                                         {% for notTitle1 in notTitle %}
@@ -131,6 +138,8 @@
                             <div class="card-body">
                                 <h3>H1 Tag 'ını çift kullanan adresler:</h3>
                                 {% if h1duplicate == "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)" %}
+                                <p>{{h1duplicate}}</p>
+                                {% elif h1duplicate ==  "H1 etiketi hakkında bilgi yok/ H1 etiketi kullanılmamış." %}
                                 <p>{{h1duplicate}}</p>
                                 {% else %}
                                     <ul>
@@ -196,6 +205,8 @@
                                 <h3>Img açıklamasına sahip olmayan sayfalar:</h3>
                                 {% if  imgAltNot == "Harika IMG açıklmalarına tüm adreslerde yer verilmiş :)" %}
                                     <p>{{imgAltNot}}</p>
+                                {% elif  imgAltNot == "Img alt etiketi hakkında bilgi alınamadı. Img kullanılmamış" %}
+                                    <p>{{imgAltNot}}</p>
                                 {% else %}
                                     <ul>
                                         {% for imgAltNot1 in imgAltNot %}
@@ -214,7 +225,9 @@
                             <div class="card-body">
                                 <h3>Img açıklaması boş olan sayfalar:</h3>
                                 {% if imgAltEmpty =="Harika img açıklamaları tüm adreslerde dolu görünüyor :)" %}
-                                 <p>{{imgAltEmpty}}</p>   
+                                 <p>{{imgAltEmpty}}</p>  
+                                 {% elif imgAltEmpty =="Img alt etiketi hakkında bilgi alınamadı. Img kullanılmamış" %}
+                                 <p>{{imgAltEmpty}}</p> 
                                 {% else %}
                                 <ul>
                                         {% for imgAltEmpty1 in imgAltEmpty %}
@@ -231,6 +244,8 @@
                             <div class="card-body">
                                 <h3>Img Redirect Url kullanan adresler: </h3>
                                 {% if redirectImg == "Harika img etiketlerinde bir web adresinden kaynak bulunmadı :)" %}
+                                <p>{{redirectImg}}</p>
+                                {% elif redirectImg == "Img alt etiketi hakkında bilgi alınamadı. Img kullanılmamış" %}
                                 <p>{{redirectImg}}</p>
                                 {% else %}
                                     <ul>
@@ -260,6 +275,8 @@
                                 <h3>Description' ı Uzun olan adresler:</h3>
                                 {% if descLong == "Harika tüm adreslerde meta açıklamaların uzun bulunmadı :) " %}
                                 <p>{{descLong}}</p>    
+                                {% elif descLong == "Descripton hakkında bilgi alınamadı. Description kullanılmamış" %}
+                                <p>{{descLong}}</p>
                                 {% else %}
                                 <ul>
                                         {% for descLong1 in descLong %}
@@ -276,7 +293,9 @@
                             <div class="card-body">
                                 <h3>Description' ı Kısa olan adresler:</h3>
                                 {% if descShort == "Harika tüm adreslerde meta açıklamanın uzunluğu kısa değil :)" %}
-                                <p>{{descShort}}</p>    
+                                <p>{{descShort}}</p>
+                                {% elif descShort == "Descripton hakkında bilgi alınamadı. Description kullanılmamış" %}
+                                <p>{{descShort}}</p>   
                                 {% else %}
                                 <ul>
                                         {% for descShort1 in descShort %}
@@ -293,7 +312,7 @@
                                 <h3>Redirect 301 durum koduna sahip olan adresler: </h3>
                                 {% if status301 == "Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz." %}
                                 <p>{{status301}}</p>  
-                                {% elif status301 == "Harika sayfalarda 301 kaynak kalıcı olarak taşındı durum koduna rastlanmadı :)" %}
+                                {% elif status301 == "Sayfalarda 301 kaynak kalıcı olarak taşındı durum koduna rastlanmadı :)" %}
                                 <p>{{status301}}</p>  
                                 {% else %}
                                 <ul>
@@ -312,7 +331,7 @@
                                 <h3>Redirect 302 durum koduna sahip olan adresler: </h3>
                                 {% if status302 == "Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz." %}
                                 <p>{{status302}}</p>  
-                                {% elif status302 == "Harika sayfalarda 302 kaynak geçici olarak taşındı durum koduna rastlanmadı :)" %}
+                                {% elif status302 == "Sayfalarda 302 kaynak geçici olarak taşındı durum koduna rastlanmadı :)" %}
                                 <p>{{status302}}</p>  
                                 {% else %}
                                 <ul>
@@ -358,7 +377,7 @@
         <p> {{test_sonuc2}}<b><p>
     </div>
         {% endif %}
-    
+    <br><br><br><br> 
   <!-- Footer -->
   <footer class="navbar navbar-dark bg-primary text-light fixed-bottom text-center" style="font-size: 20px; padding: 15px;">
     <span class="navbar-text">Zinu SEO Crawler 2024</span>

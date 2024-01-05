@@ -5,10 +5,10 @@ from advertools import crawl
 import advertools as adv
 import pandas as pd
 from waitress import serve
-from urllib.parse import urlparse 
+from urllib.parse import urlparse, urljoin
 import time 
 from werkzeug.utils import secure_filename
-from urllib.parse import urljoin
+
 
 app = Flask(__name__)
  
@@ -55,7 +55,6 @@ def create_jl_file(url, jl_file_name):
     crawl(url, jl_file_name, follow_links=True, custom_settings={'DOWNLOAD_DELAY': 1})
 
 def read_df_from_jl(jl_file_name):
-    #return pd.read_json(jl_file_name, lines=True)
     try:
         df = pd.read_json(jl_file_name, lines=True)
         return df
@@ -65,8 +64,6 @@ def read_df_from_jl(jl_file_name):
     
 
 def deleteFile(jl_file_name):
-    #with open(jl_file_name, 'w') as dosya:
-    #   dosya.write('')
     try:
         os.remove(jl_file_name)
         print(f"{jl_file_name} dosyası silindi.")
@@ -81,11 +78,23 @@ def deleteFile(jl_file_name):
 
 ALLOWED_EXTENSIONS = {'html'} #izin verilen dosya uzantıları
 app.config['ALLOWED_EXTENSIONS'] = ALLOWED_EXTENSIONS
-UPLOAD_FOLDER = 'static/yuklemeler' #yüklenen ddosyaların saklanacağı yer 
+UPLOAD_FOLDER = 'static/' #yüklenen ddosyaların saklanacağı yer 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 MAX_FILES_ALLOWED = 5  #yükleneblecek max dosya sayısı
 
-
+def deleteHtmlFiles(): #yüklenen dosyalar tarama işleminin ardından silinir
+    try:
+        for filename in os.listdir(app.config['UPLOAD_FOLDER']):
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            if filename.endswith(".html") and os.path.isfile(file_path):
+                os.remove(file_path)
+        print(f"{app.config['UPLOAD_FOLDER']} klasörü içindeki .html uzantılı dosyalar silindi.")
+    except FileNotFoundError:
+        print(f"{app.config['UPLOAD_FOLDER']} klasörü bulunamadı.")
+    except PermissionError:
+        print(f"{app.config['UPLOAD_FOLDER']} klasörünü silme izinleri yok.")
+    except Exception as e:
+        print(f"Bir hata oluştu: {e}")
 
 @app.route('/file', methods=['POST','GET'])
 def uploadFile():
@@ -133,62 +142,78 @@ def createForFile(urlList,jl_file_name): #yüklenen fileların taranması için 
 
 @app.route("/file/crawl", methods=['POST', 'GET'])
 def fileCrawler():
-    global urlList 
-    test_sonuc = "TEST SONUÇLARI" #webCrawler.html için oluşturulan eğer sayfa taranmmışsa dönen değişken
-    jl_file_name = "temp.jl"         
-    startTime = time.time()
-    createForFile(urlList,jl_file_name)# 1. Adım: .jl dosyası oluşturuldu
-    df = read_df_from_jl(jl_file_name)# 2. Adım: .jl dosyasını okuyarak DataFrame oluşturuluyor
-    if df is not None and not df.empty:
-        IMG_ALT_EMPTY = []
-        IMG_ALT_NOT = []
-        temp =[] 
-        canonicInfo = None
-        DESCRIPTION_SHORT = []
-        DESCRIPTION_LONG = []
-        CANONICAL_NOT =[]
-        canonicInfo = ""
-        load_times = []
-        H1_NOT = []
-        STATUS_CODE_4xx = []
-        H1_DUPLICATE = []
-        STATUS_CODE_BAD=[]
-        DESCRIPTION_EMPTY = []
-        TITLE_EMPTY = []
-        REDIRECT_IMG_URL = []
-        STATUS_CODE_5XX = []
-        STATUS_CODE_301 = []
-        STATUS_CODE_302 = []
-        endTime = time.time()
-        crawlingTime = endTime - startTime
-        hours, minutes, seconds = formatTime(crawlingTime) # tarama süresini saat dakika saniye olarak verir
-        #clear_lists()
-        print(df.columns)
-        # HTML şablonuna sonuçları gönder
-        deleteFile(jl_file_name)
-                
-                
-        return render_template('fileCrawl.html', test_sonuc1=test_sonuc, h1isnot=h1Avaliable(H1_NOT, df,temp=[]),badstatus=badStatus(STATUS_CODE_BAD, df,temp=[]), status4xx=clientError(STATUS_CODE_4xx,df, temp=[]),
-                                        h1duplicate=duplicateH1(H1_DUPLICATE,df, temp=[]),
-                                    time=pageOpeningTime(load_times,df, temp=[]),emptyDescription=descriptionMissing(DESCRIPTION_EMPTY,df,temp=[]), 
-                                    notTitle=titleEmpty(TITLE_EMPTY, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,df,temp=[]),
-                                    notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,df, temp=[]), 
-                                    imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,df,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,df,temp)
-                                    ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
-                                        crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
+    if request.method =='POST':
+        global urlList 
+        test_sonuc = "TEST SONUÇLARI" #webCrawler.html için oluşturulan eğer sayfa taranmmışsa dönen değişken
+        jl_file_name = "temp.jl"         
+        startTime = time.time()
+        createForFile(urlList,jl_file_name)# 1. Adım: .jl dosyası oluşturuldu
+        df = read_df_from_jl(jl_file_name)# 2. Adım: .jl dosyasını okuyarak DataFrame oluşturuluyor
+        if df is not None and not df.empty:
+            IMG_ALT_EMPTY = []
+            IMG_ALT_NOT = []
+            temp =[] 
+            canonicInfo = None
+            DESCRIPTION_SHORT = []
+            DESCRIPTION_LONG = []
+            CANONICAL_NOT =[]
+            canonicInfo = ""
+            titleInfo = ""
+            load_times = []
+            H1_NOT = []
+            h1Info =""
+            descInfo = ""
+            imgInfo = ""
+            STATUS_CODE_4xx = []
+            H1_DUPLICATE = []
+            STATUS_CODE_BAD=[]
+            DESCRIPTION_EMPTY = []
+            TITLE_EMPTY = []
+            REDIRECT_IMG_URL = []
+            STATUS_CODE_5XX = []
+            STATUS_CODE_301 = []
+            STATUS_CODE_302 = []
+            endTime = time.time()
+            crawlingTime = endTime - startTime
+            hours, minutes, seconds = formatTime(crawlingTime) # tarama süresini saat dakika saniye olarak verir
+            print(df.columns)
+            deleteFile(jl_file_name)
+            deleteHtmlFiles()       
+            if df is not None and not df.empty:
+            
+            
+            # HTML çıktısı alınabilir kontrol amaçlı
+            #    html_output = df.to_html(f"deneme.html")
+       
+                return render_template('fileCrawl.html', test_sonuc1=test_sonuc, h1isnot=h1Avaliable(H1_NOT,h1Info, df,temp=[]),badstatus=badStatus(STATUS_CODE_BAD, df,temp=[]), status4xx=clientError(STATUS_CODE_4xx,df, temp=[]),
+                                                h1duplicate=duplicateH1(H1_DUPLICATE,h1Info,df, temp=[]),
+                                            time=pageOpeningTime(load_times,df, temp=[]),emptyDescription=descriptionMissing(DESCRIPTION_EMPTY,descInfo,df,temp=[]), 
+                                            notTitle=titleEmpty(TITLE_EMPTY,titleInfo, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,descInfo,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,descInfo, df,temp=[]),
+                                            notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,imgInfo,df, temp=[]), 
+                                            imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,imgInfo,df,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,imgInfo,df,temp)
+                                            ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
+                                                crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
+    else:
+        test_sonuc2= "Daha sonra tarama işlemi için dosya yükleyiniz. "
+        return render_template("fileCrawl.html", test_sonuc2=test_sonuc2)
+
+        
 
 
-
-def h1Avaliable(H1_NOT,df,temp):
+def h1Avaliable(H1_NOT,h1Info,df,temp):
     try:
-        for idx, row in df.iterrows(): #iterrows satır bazında iterasyon sağlar. idx index i verir. dinamiklik sağlar.
-            if pd.isna(row["h1"]):
-                temp.append(row["url"])
-        H1_NOT = set(temp)
-        if not H1_NOT:
-            return "Harika H1 etiketi kullanılmayan sayfaya rastlanmadı :)"
-        else: 
-            return H1_NOT
+        if "h1" in df.columns:
+            for idx, row in df.iterrows(): #iterrows satır bazında iterasyon sağlar. idx index i verir. dinamiklik sağlar.
+                if pd.isna(row["h1"]):
+                    temp.append(row["url"])
+            H1_NOT = set(temp)
+            if not H1_NOT:
+                return "Harika H1 etiketi kullanılmayan sayfaya rastlanmadı :)"
+            else: 
+                return H1_NOT
+        else:
+            h1Info = "H1 etiketi hakkında bilgi alınamadı. H1 etiketi kullanılmamış."
+            return h1Info
     except Exception as e:
         return str(e) 
 
@@ -209,17 +234,21 @@ def clientError(STATUS_CODE_4xx,df, temp):
         return str(e) 
 
 
-def duplicateH1(H1_DUPLICATE,df,temp):
+def duplicateH1(H1_DUPLICATE,h1Info, df,temp):
     try:
-        for idx, row in df.iterrows():
-            h1InValue =  str(row["h1"])
-            if "@@" in h1InValue:
-                temp.append(row["url"])
-        H1_DUPLICATE = set(temp)
-        if not H1_DUPLICATE:
-            return "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)"
-            #print(f"H1 satırı birden fazla kez kullanılmış olan adresler: {H1_DUPLICATE}"
-        return H1_DUPLICATE
+        if "h1" in df.columns:
+            for idx, row in df.iterrows():
+                h1InValue =  str(row["h1"])
+                if "@@" in h1InValue:
+                    temp.append(row["url"])
+            H1_DUPLICATE = set(temp)
+            if not H1_DUPLICATE:
+                return "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)"
+                #print(f"H1 satırı birden fazla kez kullanılmış olan adresler: {H1_DUPLICATE}"
+            return H1_DUPLICATE
+        else:
+            h1Info = "H1 etiketi hakkında bilgi yok/ H1 etiketi kullanılmamış."
+            return h1Info
     except Exception as e:
         return str(e) 
 
@@ -268,66 +297,82 @@ def duplicateMeta(DESCRIPTION_META,df,temp):
 
 
  #meta description olup olmadığını test eder 
-def descriptionMissing(DESCRIPTION_EMPTY,df,temp):
+def descriptionMissing(DESCRIPTION_EMPTY,descInfo,df,temp):
     try:
-        for idx, row in df.iterrows():
-            if pd.isna(row["meta_desc"]):
-                temp.append(row["url"])
-        DESCRIPTION_EMPTY = set(temp)
-        if not DESCRIPTION_EMPTY:
-            return "Harika meta description'a sahip olmayan bir adres ile karşılaşılmadı :) "
-        else: 
-            return DESCRIPTION_EMPTY
+        if "meta_desc" in df.columns:
+            for idx, row in df.iterrows():
+                if pd.isna(row["meta_desc"]):
+                    temp.append(row["url"])
+            DESCRIPTION_EMPTY = set(temp)
+            if not DESCRIPTION_EMPTY:
+                return "Harika meta description'a sahip olmayan bir adres ile karşılaşılmadı :) "
+            else: 
+                return DESCRIPTION_EMPTY
+        else:
+            descInfo = "Descripton hakkında bilgi alınamadı. Description kullanılmamış"
+            return descInfo
     except Exception as e:
         return str(e) 
 
  #title tag ının olup olmadığını kontrol eder      
-def titleEmpty(TITLE_EMPTY,df,temp):
+def titleEmpty(TITLE_EMPTY,titleInfo,df,temp):
     try:
-        for idx, row in df.iterrows():
-            if pd.isna(row["title"]):
-                temp.append(row["url"])
-        TITLE_EMPTY = set(temp)
-        if not TITLE_EMPTY:
-            return "Harika title etiketine sahip olmayan bir sayfa bulunmadı :)"
-        else: 
-            return TITLE_EMPTY
-    except Exception as e:
-        return str(e) 
-
-
-
-def longDesc(DESCRIPTION_LONG,df,temp):  #description' ın uzunluğunu test eder
-    try:
-        for idx, row in df.iterrows():
-            boyut = str(row["meta_desc"])
-            if len(boyut)>160:
-                temp.append(row["url"])
-        DESCRIPTION_LONG = set(temp)
-        if not DESCRIPTION_LONG:
-            return "Harika tüm adreslerde meta açıklamaların uzun bulunmadı :) "
-        return DESCRIPTION_LONG
-    except Exception as e:
-        return str(e) 
-
-
-
-def shortDesc(DESCRIPTION_SHORT,df,temp):  #description' ın uzunluğunu test eder
-    try:
-        for idx, row in df.iterrows():
-            boyut = str(row["meta_desc"])
-            if len(boyut)<50:
-                temp.append(row["url"])
-        DESCRIPTION_SHORT = set(temp)
-        if not DESCRIPTION_SHORT: 
-            return "Harika tüm adreslerde meta açıklamanın uzunluğu kısa değil :)"
+        if "title" in df.columns:
+            for idx, row in df.iterrows():
+                if pd.isna(row["title"]):
+                    temp.append(row["url"])
+            TITLE_EMPTY = set(temp)
+            if not TITLE_EMPTY:
+                return "Harika title etiketine sahip olmayan bir sayfa bulunmadı :)"
+            else: 
+                return TITLE_EMPTY
         else:
-            return DESCRIPTION_SHORT
+            titleInfo = "Title etiketi hakkında bilg alınamadı. /Title etiketi kullanılmamış"
+            return titleInfo
     except Exception as e:
         return str(e) 
 
 
-#@SEOtest([CANONICAL_NOT] or canonicInfo) #canonic url kullanılmayan adresleri tespit eder
+
+def longDesc(DESCRIPTION_LONG,descInfo,df,temp):  #description' ın uzunluğunu test eder
+    try:
+        if "meta_desc" in df.columns:
+            for idx, row in df.iterrows():
+                boyut = str(row["meta_desc"])
+                if len(boyut)>160:
+                    temp.append(row["url"])
+            DESCRIPTION_LONG = set(temp)
+            if not DESCRIPTION_LONG:
+                return "Harika tüm adreslerde meta açıklamaların uzun bulunmadı :) "
+            return DESCRIPTION_LONG
+        else:
+            descInfo = "Descripton hakkında bilgi alınamadı. Description kullanılmamış"
+            return descInfo
+    except Exception as e:
+        return str(e) 
+
+
+
+def shortDesc(DESCRIPTION_SHORT,descInfo,df,temp):  #description' ın uzunluğunu test eder
+    try:
+        if "meta_desc" in df.columns:
+            for idx, row in df.iterrows():
+                boyut = str(row["meta_desc"])
+                if len(boyut)<50:
+                    temp.append(row["url"])
+            DESCRIPTION_SHORT = set(temp)
+            if not DESCRIPTION_SHORT: 
+                return "Harika tüm adreslerde meta açıklamanın uzunluğu kısa değil :)"
+            else:
+                return DESCRIPTION_SHORT
+        else:
+            descInfo = "Descripton hakkında bilgi alınamadı. Description kullanılmamış"
+            return descInfo
+    except Exception as e:
+        return str(e) 
+
+
+#canonic url kullanılmayan adresleri tespit eder
 def canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp):
     try:
         if "canonical" in df.columns:
@@ -346,32 +391,40 @@ def canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp):
         return str(e) 
 
  #img alt tagında açıklaması eksik olan adresleri verir
-def imgAltNot(IMG_ALT_NOT,df, temp):
+def imgAltNot(IMG_ALT_NOT,imgInfo,df, temp):
     try:
-        for idx, row in df.iterrows():
-            if pd.notna(row["img_src"]):
-                img_alt_value = row["img_alt"]
-                if pd.isna(img_alt_value):
-                    temp.append(row["url"])
-        IMG_ALT_NOT = set(temp)
-        if not IMG_ALT_NOT:
-            return "Harika IMG açıklmalarına tüm adreslerde yer verilmiş :)"
-        return set(IMG_ALT_NOT)
+        if "img_src" in df.columns:
+            for idx, row in df.iterrows():
+                if pd.notna(row["img_src"]):
+                    img_alt_value = row["img_alt"]
+                    if pd.isna(img_alt_value):
+                        temp.append(row["url"])
+            IMG_ALT_NOT = set(temp)
+            if not IMG_ALT_NOT:
+                return "Harika IMG açıklmalarına tüm adreslerde yer verilmiş :)"
+            return set(IMG_ALT_NOT)
+        else:
+            imgInfo = "Img alt etiketi hakkında bilgi alınamadı. Img kullanılmamış"
+            return imgInfo
     except Exception as e:
         return str(e) 
 
 
-def imgAltEmpty(IMG_ALT_EMPTY,df, temp):
+def imgAltEmpty(IMG_ALT_EMPTY,imgInfo,df,temp):
     try:
-        for idx, row in df.iterrows():
-            if pd.notna(row["img_src"]):
-                img_alt = str(row["img_alt"])
-                if "@@@" in img_alt:
-                    temp.append(row["url"])
-        IMG_ALT_EMPTY = set(temp)
-        if not IMG_ALT_EMPTY:
-            return "Harika img açıklamaları tüm adreslerde dolu görünüyor :)"
-        return IMG_ALT_EMPTY
+        if "img_src" in df.columns:
+            for idx, row in df.iterrows():
+                if pd.notna(row["img_src"]):
+                    img_alt = str(row["img_alt"])
+                    if "@@@" in img_alt:
+                        temp.append(row["url"])
+            IMG_ALT_EMPTY = set(temp)
+            if not IMG_ALT_EMPTY:
+                return "Harika img açıklamaları tüm adreslerde dolu görünüyor :)"
+            return IMG_ALT_EMPTY
+        else:
+            imgInfo = "Img alt etiketi hakkında bilgi alınamadı. Img kullanılmamış"
+            return imgInfo    
     except Exception as e:
         return str(e) 
 
@@ -401,17 +454,22 @@ def disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp):
         return ROBOTS_TXT_DISALLOW
     except Exception as e:
         return str(e) 
-def redirectImage(REDIRECT_IMG_URL,df,temp):
+    
+def redirectImage(REDIRECT_IMG_URL,imgInfo,df,temp):
     try:
-        for idx, row in df.iterrows():
-            if pd.notna(row["img_src"]):
-                img_srcc = str(row["img_src"])
-                if "http" in img_srcc:
-                    temp.append(row["url"])
-        REDIRECT_IMG_URL = set(temp)
-        if not REDIRECT_IMG_URL:
-            return "Harika img etiketlerinde bir web adresinden kaynak bulunmadı :)"
-        return REDIRECT_IMG_URL
+        if "img_src" in df.columns:
+            for idx, row in df.iterrows():
+                if pd.notna(row["img_src"]):
+                    img_srcc = str(row["img_src"])
+                    if "http" in img_srcc:
+                        temp.append(row["url"])
+            REDIRECT_IMG_URL = set(temp)
+            if not REDIRECT_IMG_URL:
+                return "Harika img etiketlerinde bir web adresinden kaynak bulunmadı :)"
+            return REDIRECT_IMG_URL
+        else:
+            imgInfo = "Img alt etiketi hakkında bilgi alınamadı. Img kullanılmamış"
+            return imgInfo  
     except Exception as e:
         return str(e) 
 
@@ -432,6 +490,7 @@ def serverErrors(STATUS_CODE_5XX, df,temp):
             return STATUS_CODE_5XX
     except Exception as e:
         return str(e)    
+    
 def movedPermanently(STATUS_CODE_301,df, temp):
     try:
         for idx, row in df.iterrows():
@@ -443,7 +502,7 @@ def movedPermanently(STATUS_CODE_301,df, temp):
                 return "Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz."
         STATUS_CODE_301 = set(temp)
         if not STATUS_CODE_301:
-            return "Harika sayfalarda 301 kaynak kalıcı olarak taşındı durum koduna rastlanmadı :)"
+            return "Sayfalarda 301 kaynak kalıcı olarak taşındı durum koduna rastlanmadı :)"
         else:
             return STATUS_CODE_301
     except Exception as e:
@@ -460,7 +519,7 @@ def movedTemporarily(STATUs_CODE_302,df, temp):
                 return "Durum kodu bilgisine ulaşılamadı. Daha sonra tekrar deneyiniz."
         STATUS_CODE_302 = set(temp)
         if not STATUS_CODE_302:
-            return "Harika sayfalarda 302 kaynak geçici olarak taşındı durum koduna rastlanmadı :)"
+            return "Sayfalarda 302 kaynak geçici olarak taşındı durum koduna rastlanmadı :)"
         else:
             return STATUS_CODE_302
     except Exception as e:
@@ -487,16 +546,16 @@ def webCrawlerFromForm():
         x, y, df,startTime = isValidUrl(url,jl_file_name)
         if y:
             test_sonuc = "TEST SONUÇLARI" #webCrawler.html için oluşturulan eğer sayfa taranmmışsa dönen değişken
-            
-            #startTime = time.time()
-            #create_jl_file(url, jl_file_name)# 1. Adım: .jl dosyası oluşturuldu
-            #df = read_df_from_jl(jl_file_name)# 2. Adım: .jl dosyasını okuyarak DataFrame oluşturuluyor
             if df is not None and not df.empty:
                 IMG_ALT_EMPTY = []
                 IMG_ALT_NOT = []
                 ROBOTS_TXT_DISALLOW = []
                 temp =[] 
                 canonicInfo = None
+                h1Info =""
+                descInfo = ""
+                imgInfo = ""
+                titleInfo = ""
                 robotsIsNot = "Robots.txt dosyası bulunamadı"
                 DESCRIPTION_SHORT = []
                 DESCRIPTION_LONG = []
@@ -519,17 +578,17 @@ def webCrawlerFromForm():
                 hours, minutes, seconds = formatTime(crawlingTime) # tarama süresini saat dakika saniye olarak verir
                 #clear_lists()
                 print(df.columns)
-                # HTML şablonuna sonuçları gönder
-                htmlOut = df.to_html(f"{url.replace('http://', '').replace('https://', '').replace('/', '').replace('.com', '')}.html")
+                # HTML şablonuna sonuçları gönder Fonksiyon kontrolü için uygulanablir.
+                #htmlOut = df.to_html(f"{url.replace('http://', '').replace('https://', '').replace('/', '').replace('.com', '')}.html")
                 deleteFile(jl_file_name)
                 
                 
-                return render_template('webCrawl.html', test_sonuc1=test_sonuc, h1isnot=h1Avaliable(H1_NOT, df,temp=[]),badstatus=badStatus(STATUS_CODE_BAD, df,temp=[]), status4xx=clientError(STATUS_CODE_4xx,df, temp=[]),
-                                        h1duplicate=duplicateH1(H1_DUPLICATE,df, temp=[]),
-                                    time=pageOpeningTime(load_times,df, temp=[]),duplicatedmeta=duplicateMeta(DESCRIPTION_META, df,temp=[]),emptyDescription=descriptionMissing(DESCRIPTION_EMPTY,df,temp=[]), 
-                                    notTitle=titleEmpty(TITLE_EMPTY, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,df,temp=[]),
-                                    notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,df, temp=[]), 
-                                    imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,df,temp=[]),robots =disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,df,temp)
+                return render_template('webCrawl.html', test_sonuc1=test_sonuc, h1isnot=h1Avaliable(H1_NOT,h1Info, df,temp=[]),badstatus=badStatus(STATUS_CODE_BAD, df,temp=[]), status4xx=clientError(STATUS_CODE_4xx,df, temp=[]),
+                                        h1duplicate=duplicateH1(H1_DUPLICATE,h1Info,df, temp=[]),
+                                    time=pageOpeningTime(load_times,df, temp=[]),emptyDescription=descriptionMissing(DESCRIPTION_EMPTY,descInfo,df,temp=[]), 
+                                    notTitle=titleEmpty(TITLE_EMPTY,titleInfo, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,descInfo,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,descInfo,df,temp=[]),
+                                    notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,imgInfo,df, temp=[]), 
+                                    imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,imgInfo,df,temp=[]),robots =disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,imgInfo,df,temp)
                                     ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
                                         crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
 
@@ -559,6 +618,6 @@ def error_404():
 if __name__ == '__main__':
    
     serve(app, host='0.0.0.0', port=5000)
-    app.debug=True
+    app.debug=False
    
 
