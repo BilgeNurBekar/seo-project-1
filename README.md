@@ -54,6 +54,6 @@ Projenin yerel ortamınızda çalıştırılması için aşağıdaki adımları 
 6. Uygulamayı çalıştırın:
 
     ```bash
-    web: waitress-serve --host=127.0.0.1 --port=5000 main:app    ```
+    web: waitress-serve --host=127.0.0.1 --port=5000 main:app 
     ```
  
