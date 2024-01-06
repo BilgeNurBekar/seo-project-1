@@ -16,7 +16,7 @@ Projenin yerel ortamınızda çalıştırılması için aşağıdaki adımları 
 1. Git deposunu klonlayın:
 
     ```bash
-    git clone https://github.com/BilgeNurBekar/rptree_project.git
+    git clone https://github.com/BilgeNurBekar/seo-project-1.git
     ```
 
 2. Proje dizinine gidin:
