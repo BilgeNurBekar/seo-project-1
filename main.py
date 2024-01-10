@@ -173,10 +173,12 @@ def fileCrawler():
             STATUS_CODE_5XX = []
             STATUS_CODE_301 = []
             STATUS_CODE_302 = []
+            COMP_NOT=[]
+            compInfo= ""
             endTime = time.time()
             crawlingTime = endTime - startTime
             hours, minutes, seconds = formatTime(crawlingTime) # tarama süresini saat dakika saniye olarak verir
-            print(df.columns)
+            #print(df.columns)
             deleteFile(jl_file_name)
             deleteHtmlFiles()       
             if df is not None and not df.empty:
@@ -191,13 +193,25 @@ def fileCrawler():
                                             notTitle=titleEmpty(TITLE_EMPTY,titleInfo, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,descInfo,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,descInfo, df,temp=[]),
                                             notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,imgInfo,df, temp=[]), 
                                             imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,imgInfo,df,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,imgInfo,df,temp)
-                                            ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
+                                            ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),compNot=mobileCompatibility(COMP_NOT,compInfo,df,temp=[]),
                                                 crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
     else:
         test_sonuc2= "Daha sonra tarama işlemi için dosya yükleyiniz. "
         return render_template("fileCrawl.html", test_sonuc2=test_sonuc2)
 
         
+def sslVerification(SSL_NOT, df, temp):
+    try:
+        for idx, row in df.iterrows():
+            sslVer = str(row["url"])
+            if "https" not in sslVer:
+                temp.append(row["url"])
+        SSL_NOT = set(temp)
+        if not SSL_NOT:
+            return "Harika her sayfada SSL sertfikası kullanılmış :)"
+        return SSL_NOT
+    except Exception as e:
+        return str(e) 
 
 
 def h1Avaliable(H1_NOT,h1Info,df,temp):
@@ -228,7 +242,6 @@ def clientError(STATUS_CODE_4xx,df, temp):
         if not STATUS_CODE_4xx:
             return "Harika sayfalarda 4xx durum koduna rastlanmadı :)"
         else:
-            #print(f"4xx durum koduna sahip linkler: {STATUS_CODE_BAD}")
             return STATUS_CODE_4xx
     except Exception as e:
         return str(e) 
@@ -244,7 +257,6 @@ def duplicateH1(H1_DUPLICATE,h1Info, df,temp):
             H1_DUPLICATE = set(temp)
             if not H1_DUPLICATE:
                 return "Harika bir sayfada birden fazla H1 etiketi kullanan adres bulunmadı :)"
-                #print(f"H1 satırı birden fazla kez kullanılmış olan adresler: {H1_DUPLICATE}"
             return H1_DUPLICATE
         else:
             h1Info = "H1 etiketi hakkında bilgi yok/ H1 etiketi kullanılmamış."
@@ -277,21 +289,6 @@ def pageOpeningTime(load_times,df, temp):
             return "Harika web sayfaların 3 sn gibi kısa bir süreden dahi hızlı açılmakta :)"
         else:
             return load_times
-    except Exception as e:
-        return str(e) 
-
-
-
-def duplicateMeta(DESCRIPTION_META,df,temp):
-    try:
-        non_nan_mask = ~df["meta_desc"].isna() #~ ile NaN olmayan değerler seçilir.
-        filtered_df = df[non_nan_mask]
-
-        for idx, row in filtered_df.iterrows():
-        # Burada işlemlerinizi gerçekleştirin
-        # DESCRIPTION_META listesine URL ekleyin
-            DESCRIPTION_META.append(row["url"])
-        return set(DESCRIPTION_META)
     except Exception as e:
         return str(e) 
 
@@ -428,11 +425,6 @@ def imgAltEmpty(IMG_ALT_EMPTY,imgInfo,df,temp):
     except Exception as e:
         return str(e) 
 
-# fonksiyonlar nan yada değer döndürürp boş olabilir bunu göz önünde bulunurup kodu ona göre yazman lazım. 
-#nan ise mesela zaten ölçmeye gerek yok 
-#@@@ ise ancak o zaman urlleri doldurur
-
-
 
 def disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp):
     try:
@@ -525,12 +517,33 @@ def movedTemporarily(STATUs_CODE_302,df, temp):
     except Exception as e:
         return str(e) 
 
+def countPages(count,df):
+    count = len(df)
+    return f"Taranan Sayfa Sayısı: {count}"
 
 
 def formatTime(seconds): #tarama süresini saat.dakika.saniye formatına dönüştürür
     minutes, seconds = divmod(seconds, 60)
     hours, minutes = divmod(minutes, 60)
     return int(hours), int(minutes), seconds
+
+
+def mobileCompatibility(COMP_NOT,compInfo,df,temp):
+    try:
+        if "viewport" in df.columns:
+            for idx, row in df.iterrows():
+                comp = str(row["viewport"])
+                if ("width=device-width, initial-scale=1.0" not in comp) or pd.isna(row["viewport"]) :
+                        temp.append(row["url"])
+            COMP_NOT = set(temp)
+            if not COMP_NOT:
+                return "Harka mobil uyumluluk için gereken viewport etiketi kullanılmış"
+            return COMP_NOT
+        else:
+            compInfo = "meta viewport etiketi hakkında bilgi alınamadı. viewport kullanılmamış"
+            return compInfo  
+    except Exception as e:
+        return str(e) 
 
 
 
@@ -556,6 +569,7 @@ def webCrawlerFromForm():
                 descInfo = ""
                 imgInfo = ""
                 titleInfo = ""
+                count =" "
                 robotsIsNot = "Robots.txt dosyası bulunamadı"
                 DESCRIPTION_SHORT = []
                 DESCRIPTION_LONG = []
@@ -566,18 +580,19 @@ def webCrawlerFromForm():
                 STATUS_CODE_4xx = []
                 H1_DUPLICATE = []
                 STATUS_CODE_BAD=[]
-                DESCRIPTION_META = []
                 DESCRIPTION_EMPTY = []
                 TITLE_EMPTY = []
                 REDIRECT_IMG_URL = []
                 STATUS_CODE_5XX = []
                 STATUS_CODE_301 = []
                 STATUS_CODE_302 = []
+                SSL_NOT = []
+                COMP_NOT = []
+                compInfo = ""
                 endTime = time.time()
                 crawlingTime = endTime - startTime
                 hours, minutes, seconds = formatTime(crawlingTime) # tarama süresini saat dakika saniye olarak verir
-                #clear_lists()
-                print(df.columns)
+                #print(df.columns)
                 # HTML şablonuna sonuçları gönder Fonksiyon kontrolü için uygulanablir.
                 #htmlOut = df.to_html(f"{url.replace('http://', '').replace('https://', '').replace('/', '').replace('.com', '')}.html")
                 deleteFile(jl_file_name)
@@ -589,8 +604,8 @@ def webCrawlerFromForm():
                                     notTitle=titleEmpty(TITLE_EMPTY,titleInfo, df,temp=[]), descLong = longDesc(DESCRIPTION_LONG,descInfo,df,temp=[]), descShort =shortDesc(DESCRIPTION_SHORT,descInfo,df,temp=[]),
                                     notcanonic=canonicalMissing(CANONICAL_NOT,canonicInfo,df,temp=[]),imgAltNot=imgAltNot(IMG_ALT_NOT,imgInfo,df, temp=[]), 
                                     imgAltEmpty=imgAltEmpty(IMG_ALT_EMPTY,imgInfo,df,temp=[]),robots =disallowRobots(ROBOTS_TXT_DISALLOW,robotsIsNot,temp=[]), redirectImg=redirectImage(REDIRECT_IMG_URL,imgInfo,df,temp)
-                                    ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]),
-                                        crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
+                                    ,status5xx = serverErrors(STATUS_CODE_5XX,df,temp=[]), status301=movedPermanently(STATUS_CODE_301,df, temp=[]), status302 = movedTemporarily(STATUS_CODE_302,df,temp=[]), sslVer = sslVerification(SSL_NOT,df,temp=[]),
+                                    countPages=countPages(count,df),compNot=mobileCompatibility(COMP_NOT,compInfo,df,temp=[]), crawltime=f"{hours:02d}h {minutes:02d}m {seconds:.0f}s")
 
         if not y:
             if df is not None and "errors" in df.columns  : #oluşturulan işlevsiz df silinecektir

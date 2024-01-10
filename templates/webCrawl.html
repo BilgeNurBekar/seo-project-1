@@ -31,6 +31,12 @@
             <div class="col">
                 <h1>{{test_sonuc1}}</h1>
             </div>
+        </div>
+    <div id = "crawl2" class="container mt-5">
+        <div class="row">
+            <div class="col text-left">
+                <h3>{{countPages}}</h3>
+            </div>
             <div class="col text-right">
                 <h3>Tarama Süresi: {{ crawltime }}</h3>
             </div>
@@ -87,6 +93,22 @@
                                 <ul>
                                     {% for status5xx1 in status5xx %}
                                         <li><a href="{{ status5xx1 }}" target="_blank">{{ status5xx1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}                    
+                            </div>
+                        </div>
+
+                         <!-- SSL sertifikasına sahip olmayan adresler -->
+                         <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>SSL Sertifikası Kullanılmayan Adresler </h3>
+                                {% if  sslVer  == "Harika her sayfada SSL sertfikası kullanılmış :)" %}
+                                <p>{{sslVer}}</p>
+                                {% else %}    
+                                <ul>
+                                    {% for sslVer1 in sslVer %}
+                                        <li><a href="{{ sslVer1 }}" target="_blank">{{ sslVer1 }}</a></li>
                                     {% endfor %}
                                 </ul>
                                 {% endif %}                    
@@ -151,6 +173,23 @@
                                     
                                 {% endif %}
                             
+                            </div>
+                        </div>
+                        <!-- Mobil uyumluluk  -->
+                        <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Mobil uyumluluk için viewport kullanmayan adresler</h3>
+                                {% if  compNot =="Harka mobil uyumluluk için gereken viewport etiketi kullanılmış" %}
+                                <p>{{compNot}}</p>
+                                {% elif compNot == "meta viewport etiketi hakkında bilgi alınamadı. viewport kullanılmamış" %}
+                                <p>{{compNot}}</p>
+                                {% else %}    
+                                <ul>
+                                    {% for compNot1 in compNot %}
+                                        <li><a href="{{ compNot1 }}" target="_blank">{{ compNot1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}                    
                             </div>
                         </div>
 

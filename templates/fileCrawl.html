@@ -153,6 +153,23 @@
                             
                             </div>
                         </div>
+                           <!-- Mobil uyumluluk  -->
+                           <div class="card border-light mb-3">
+                            <div class="card-body">
+                                <h3>Mobil uyumluluk için viewport kullanmayan adresler</h3>
+                                {% if  compNot =="Harka mobil uyumluluk için gereken viewport etiketi kullanılmış" %}
+                                <p>{{compNot}}</p>
+                                {% elif compNot == "meta viewport etiketi hakkında bilgi alınamadı. viewport kullanılmamış" %}
+                                <p>{{compNot}}</p>
+                                {% else %}    
+                                <ul>
+                                    {% for compNot1 in compNot %}
+                                        <li><a href="{{ compNot1 }}" target="_blank">{{ compNot1 }}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}                    
+                            </div>
+                        </div>
 
                         
                     </div>
